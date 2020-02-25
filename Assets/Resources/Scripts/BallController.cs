@@ -10,9 +10,8 @@ public class BallController : MonoBehaviour
     private Rigidbody BallBody;
     [SerializeField]
     private Camera MainCamera;
-    [SerializeField]
-    private float BallForce;
 
+    private float BallForce;
     private bool IsCharConnect;
     private Transform DirectionTrans;
 
@@ -20,16 +19,14 @@ public class BallController : MonoBehaviour
     private Vector3 DestPos;
     private RaycastHit HitInfo;
     private IEnumerator DirectionCoroutine;
-    
-    // Start is called before the first frame update
-    void Awake()
+   
+    private void Awake()
     {
         DirectionCoroutine = DirectionRotate();
         DirectionTrans = DirectionUI.GetComponent<Transform>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         MoveBallByMouse();
     }
@@ -41,33 +38,39 @@ public class BallController : MonoBehaviour
             DirectionUI.SetActive(true);
             StartCoroutine(DirectionCoroutine);
         }
-        if(Input.GetMouseButton(0))
-        {
-            MouseRay = MainCamera.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(MouseRay.origin, MouseRay.direction, out HitInfo, 100f))
-            {
-                if (HitInfo.transform.tag.Equals("Ground"))
-                    DestPos = HitInfo.point;
-            }
-        }
 
-        if(Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             DirectionUI.SetActive(false);
             StopCoroutine(DirectionCoroutine);
             BallBody.velocity = (DestPos - transform.position).normalized * BallForce;
         }
-            
+
+        if (Input.GetMouseButton(0))
+        {
+            MouseRay = MainCamera.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(MouseRay.origin, MouseRay.direction, out HitInfo, 100f))
+                DestPos = HitInfo.point;
+        }
     }
 
     private IEnumerator DirectionRotate()
     {
         while(true)
         {
-            Vector3 _xz = DestPos;
-            _xz.y = 1f;
+            BallForce = (DestPos - transform.position).magnitude;
 
-            transform.LookAt(_xz);
+            Vector3 _destpos = DestPos;
+            Vector3 _mid = (DestPos + transform.position)/2;
+            Vector3 _scale = DirectionTrans.localScale;
+            _mid.y = 1f;
+            _destpos.y = 1f;
+            _scale.y = BallForce;
+
+            transform.LookAt(_destpos);
+            DirectionTrans.position = _mid;
+            DirectionTrans.localScale = _scale;
+            
             yield return null;
         }
     }
