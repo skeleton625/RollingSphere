@@ -6,15 +6,23 @@ public class BlockCollider : MonoBehaviour
 {
     [SerializeField]
     private GameObject SplitBlockModel;
+    [SerializeField]
+    private Animator BlockAnim;
     private GameObject PreSplitBlock;
 
     private UIManager UManager;
     private BlockGenerator BG;
 
+    private void OnEnable()
+    {
+        BlockAnim.Play("MoveUp", 0, 0.25f);
+    }
+
     private void Start()
     {
         BG = BlockGenerator.instance;
         UManager = UIManager.instance;
+        BlockAnim = GetComponent<Animator>();
         PreSplitBlock = Instantiate(SplitBlockModel, Vector3.zero, Quaternion.identity);
         PreSplitBlock.SetActive(false);
     }
