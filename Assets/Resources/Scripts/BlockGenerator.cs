@@ -47,7 +47,7 @@ public class BlockGenerator : MonoBehaviour
     {
         float _x = Random.Range(-36, 36);
         float _z = Random.Range(-21, 21);
-        return new Vector3(_x, 2, _z);
+        return new Vector3(_x, -2, _z);
     }
 
     private IEnumerator SetActiveBlock()
