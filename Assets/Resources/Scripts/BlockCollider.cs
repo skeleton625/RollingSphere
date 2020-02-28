@@ -11,7 +11,7 @@ public class BlockCollider : MonoBehaviour
     [SerializeField]
     private Animator BlockAnim;
     private UIManager UManager;
-    private BlockGenerator BG;
+    private GameManager GManager;
 
     private void OnEnable()
     {
@@ -20,7 +20,7 @@ public class BlockCollider : MonoBehaviour
 
     private void Start()
     {
-        BG = BlockGenerator.instance;
+        GManager = GameManager.instance;
         UManager = UIManager.instance;
     }
 
@@ -30,7 +30,7 @@ public class BlockCollider : MonoBehaviour
         {
             SplitBlock.transform.position = transform.position;
             SplitBlock.SetActive(true);
-            BG.PushPreBlock(gameObject);
+            GManager.PushPreBlock(gameObject);
             UManager.PlusScore();
             gameObject.SetActive(false);
         }
