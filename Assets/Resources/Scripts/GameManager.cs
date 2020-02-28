@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class BlockGenerator : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject[] BreakBlocks;
     [SerializeField]
     private GameObject[] UnBreakBlocks;
+    [SerializeField]
+    private GameObject[] EnemyObjects;
+    [SerializeField]
+    private Transform PlayerBall;
 
     [SerializeField]
     private int BlockCount;
@@ -17,21 +22,37 @@ public class BlockGenerator : MonoBehaviour
     private float BreakableBlockTime;
     [SerializeField]
     private float UnBreakableBlockTime;
+    [SerializeField]
+    private float EnemyMoveTime;
 
-    public static BlockGenerator instance;
+    public static GameManager instance;
     private int preBlockCount;
+    private bool isGameOver;
+    public bool IsGameOver
+    { set => isGameOver = value; }
     private GameObject[] Blocks;
     private Queue<GameObject> BlockQueue;
 
     private void Awake()
     {
         instance = this;
+        isGameOver = false;
 
         preBlockCount = 0;
         Blocks = new GameObject[BlockCount];
         BlockQueue = new Queue<GameObject>();
         StartCoroutine(GenerateBreakableBlock());
         StartCoroutine(GenerateUnBreakableBlock());
+        StartCoroutine(MoveEnemyObjects());
+    }
+
+    private void Update()
+    {
+        if (isGameOver)
+        {
+            StopAllCoroutines();
+            isGameOver = false;
+        }
     }
 
     private void GenerateBlocks()
@@ -110,6 +131,27 @@ public class BlockGenerator : MonoBehaviour
             ++_num;
             if (_num.Equals(UnBreakBlocks.Length))
                 _num = 0;
+        }
+    }
+
+    private IEnumerator MoveEnemyObjects()
+    {
+        WaitForSeconds _time = new WaitForSeconds(EnemyMoveTime);
+        int _num = 0;
+        NavMeshAgent[] _ai = new NavMeshAgent[EnemyObjects.Length];
+
+        for (int i = 0; i < EnemyObjects.Length; i++)
+            _ai[i] = EnemyObjects[i].GetComponent<NavMeshAgent>();
+
+        while(true)
+        {
+            _ai[_num].SetDestination(PlayerBall.position);
+            yield return _time;
+
+            ++_num;
+            if (_num.Equals(EnemyObjects.Length))
+                _num = 0;
+                
         }
     }
 
