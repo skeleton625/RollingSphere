@@ -5,11 +5,14 @@ using UnityEngine;
 public class BlockCollider : MonoBehaviour
 {
     [SerializeField]
+    private GameObject BlockField;
+    [SerializeField]
     private GameObject SplitBlock;
     [SerializeField]
     private string SensibleTag;
     [SerializeField]
     private Animator BlockAnim;
+
     private UIManager UManager;
     private GameManager GManager;
 
@@ -30,9 +33,12 @@ public class BlockCollider : MonoBehaviour
         {
             SplitBlock.transform.position = transform.position;
             SplitBlock.SetActive(true);
+
             GManager.PushPreBlock(gameObject);
-            UManager.PlusScore();
+            UManager.RenewScore(1);
             gameObject.SetActive(false);
         }
+        else if (other.tag.Equals("Block"))
+            GManager.ReGenerateBlock(BlockField);
     }
 }
