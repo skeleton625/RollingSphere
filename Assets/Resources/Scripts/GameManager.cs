@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject[] EnemyObjects;
     [SerializeField]
-    private Transform PlayerBall;
+    private GameObject PlayerBall;
 
     [SerializeField]
     private int BlockCount;
@@ -25,34 +25,39 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float EnemyMoveTime;
 
-    public static GameManager instance;
     private int preBlockCount;
     private bool isGameOver;
     public bool IsGameOver
     { set => isGameOver = value; }
+    private bool IsGamePause;
+    private Transform BTransform;
+    private BallController BControl;
+
     private GameObject[] Blocks;
     private Queue<GameObject> BlockQueue;
+
+    private UIManager UManager;
+    public static GameManager instance;
 
     private void Awake()
     {
         instance = this;
-        isGameOver = false;
-
         preBlockCount = 0;
+        IsGamePause = false;
+
         Blocks = new GameObject[BlockCount];
         BlockQueue = new Queue<GameObject>();
+        BTransform = PlayerBall.transform;
+        BControl = PlayerBall.GetComponent<BallController>();
         StartCoroutine(GenerateBreakableBlock());
         StartCoroutine(GenerateUnBreakableBlock());
         StartCoroutine(MoveEnemyObjects());
+        StartCoroutine(UpdateCoroutine());
     }
 
-    private void Update()
+    private void Start()
     {
-        if (isGameOver)
-        {
-            StopAllCoroutines();
-            isGameOver = false;
-        }
+        UManager = UIManager.instance;
     }
 
     private void GenerateBlocks()
@@ -74,6 +79,28 @@ public class GameManager : MonoBehaviour
         float _x = Random.Range(-_hor, _hor);
         float _z = Random.Range(-_ver, _ver);
         return new Vector3(_x, -3, _z);
+    }
+
+    private IEnumerator UpdateCoroutine()
+    {
+        while(true)
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                IsGamePause = !IsGamePause;
+                UManager.SetActivePausePanel();
+            }
+
+            if (!IsGamePause)
+                BControl.MoveBallByMouse();
+
+            if (!PlayerBall.activeSelf)
+            {
+                StopAllCoroutines();
+                break;
+            }
+            yield return null;
+        }
     }
 
     private IEnumerator GenerateBreakableBlock()
@@ -145,8 +172,8 @@ public class GameManager : MonoBehaviour
 
         while(true)
         {
-            _ai[_num].SetDestination(PlayerBall.position);
             yield return _time;
+            _ai[_num].SetDestination(BTransform.position);
 
             ++_num;
             if (_num.Equals(EnemyObjects.Length))
@@ -155,18 +182,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ReGenerateBlock(GameObject _block, int _type)
+    public void ReGenerateBlock(GameObject _block)
     {
         _block.SetActive(false);
-        switch(_type)
-        {
-            case 0:
-                _block.transform.position = RandomizeBlockPosition(36, 21);
-                break;
-            case 1:
-                _block.transform.position = RandomizeBlockPosition(35, 20);
-                break;
-        }
+        Vector3 _pos = RandomizeBlockPosition(36, 21);
+        _block.transform.localPosition = _pos;
         _block.SetActive(true);
     }
 
