@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb69b1c6c79cc94f968358d29c0f5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlockType: 0
+  BlockField: {fileID: 7916758038785961067}
   SplitBlock: {fileID: 8000195008704476151}
   SensibleTag: Player
   BlockAnim: {fileID: 7916758038000702663}

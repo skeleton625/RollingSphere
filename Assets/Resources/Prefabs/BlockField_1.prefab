@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb69b1c6c79cc94f968358d29c0f5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlockType: 0
+  BlockField: {fileID: 3667546387652957557}
   SplitBlock: {fileID: 6981536113038800367}
   SensibleTag: Player
   BlockAnim: {fileID: 3667546388985584249}
