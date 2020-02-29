@@ -11,8 +11,8 @@ public class BallController : MonoBehaviour
     [SerializeField]
     private Camera MainCamera;
 
+    private bool IsClicked;
     private float BallForce;
-    private bool IsCharConnect;
     private Transform DirectionTrans;
 
     private Ray MouseRay;
@@ -24,34 +24,6 @@ public class BallController : MonoBehaviour
     {
         DirectionCoroutine = DirectionRotate();
         DirectionTrans = DirectionUI.GetComponent<Transform>();
-    }
-
-    private void Update()
-    {
-        MoveBallByMouse();
-    }
-
-    private void MoveBallByMouse()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            DirectionUI.SetActive(true);
-            StartCoroutine(DirectionCoroutine);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            DirectionUI.SetActive(false);
-            StopCoroutine(DirectionCoroutine);
-            BallBody.velocity = (DestPos - transform.position).normalized * BallForce;
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            MouseRay = MainCamera.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(MouseRay.origin, MouseRay.direction, out HitInfo, 100f))
-                DestPos = HitInfo.point;
-        }
     }
 
     private IEnumerator DirectionRotate()
@@ -72,6 +44,29 @@ public class BallController : MonoBehaviour
             DirectionTrans.localScale = _scale;
             
             yield return null;
+        }
+    }
+
+    public void MoveBallByMouse()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            DirectionUI.SetActive(true);
+            StartCoroutine(DirectionCoroutine);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            DirectionUI.SetActive(false);
+            StopCoroutine(DirectionCoroutine);
+            BallBody.velocity = (DestPos - transform.position).normalized * BallForce;
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            MouseRay = MainCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(MouseRay.origin, MouseRay.direction, out HitInfo, 100f))
+                DestPos = HitInfo.point;
         }
     }
 }
