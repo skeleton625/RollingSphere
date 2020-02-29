@@ -24,7 +24,7 @@ public class SplitBlockController : MonoBehaviour
     private IEnumerator SetActiveSplitBlock()
     {
         yield return new WaitForSeconds(DeActiveTime);
-        ReInitiateBlockPos();
+        ReTranslateBlockPos();
         gameObject.SetActive(false);
     }
 
@@ -40,7 +40,7 @@ public class SplitBlockController : MonoBehaviour
         }
     }
 
-    private void ReInitiateBlockPos()
+    private void ReTranslateBlockPos()
     {
         for(int i = 0; i < BlockCount; i++)
             Blocks[i].localPosition = DefaultPos[i];
